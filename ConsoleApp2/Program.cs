@@ -10,6 +10,7 @@ namespace ConsoleApp2
 {
     using System;
     using System.Dynamic;
+    using System.Linq;
     using System.Runtime.CompilerServices;
 
     partial class Program
@@ -18,28 +19,57 @@ namespace ConsoleApp2
         {
             try
             {
-                var commandList = new CommandArgumentList();
-                commandList.Add("Rows", ParseCaster.AsInt);
-                commandList.Add("Columns", ParseCaster.AsInt);
-                commandList.Add("Data", ParseCaster.AsInt, args.Length - 1);
+                string err;
+                var commandList = new ArgumentList(args);
+                if (!commandList.Add("Rows", ParseCaster.AsInt, out err))
+                {
+                    Console.WriteLine(err);
+                    return;
+                }
+                if (!commandList.Add("Columns", ParseCaster.AsInt, out err))
+                {
+                    Console.WriteLine(err);
+                    return;
+                }
+                int? row = commandList["Rows"]?.Value as int? ?? 0;
+                int? column = commandList["Columns"]?.Value as int? ?? 0;
+                if (!commandList.Add("Data", ParseCaster.AsInt, out err, row.Value * column.Value))
+                {
+                    Console.WriteLine(err);
+                    return;
+                }
 
-                commandList.Add("Operator", ParseCaster.AsString);
-                commandList.TryParse(args, out string err);
+                if (!commandList.Add("Operator", ParseCaster.AsString, out err))
+                {
+                    Console.WriteLine(err);
+                    return;
+                }
+                //commandList.Add("Value", ParseCaster.AsInt, 0, true);
+
+                int?[] data = commandList.Arguments
+                    .Where((arg) => arg.Name.Contains("Data", StringComparison.InvariantCultureIgnoreCase))
+                    .Select(arg => arg.Value as int?)
+                    .ToArray<int?>();
+                var matrix = Matrix.TryCreate(row.Value, column.Value, data, out err);
                 if (!string.IsNullOrEmpty(err))
                 {
                     Console.WriteLine(err);
                     return;
                 }
-                int? row = commandList["Rows"].Value as int?;
-                int? column = commandList["Columns"].Value as int?;
-                var matrix = Matrix.TryCreate(row.Value, column.Value, commandList.Arguments, out err);
-                if (!string.IsNullOrEmpty(err))
+                var operatorPart = commandList["Operator"]?.Value as string;
+                if (operatorPart == null)
                 {
-                    Console.WriteLine(err);
                     return;
                 }
-                var @operator = commandList["Operator"].Value as string;
-                var result = matrix.TryTransform(@operator, out err);
+                var operatorSplit = operatorPart.Split(',');
+                var @operator = operatorSplit.FirstOrDefault() ?? string.Empty;
+                var valuePart = operatorSplit.LastOrDefault();
+                if(!int.TryParse(valuePart, out int value))
+                {
+                    value = 1;
+                }
+                
+                var result = matrix.TryTransform(@operator, value, out err);
                 if (!string.IsNullOrEmpty(err))
                 {
                     Console.WriteLine(err);

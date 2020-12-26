@@ -2,33 +2,38 @@
 namespace ConsoleApp2
 {
     using System;
+    using System.Dynamic;
 
-    partial class Program
+    public class TransformFunction
     {
-        public class TransformFunction
+        public string @Operator { get; set; }
+        private delegate Matrix action(Matrix matrix, int? value);
+        private action @Delegate { get; set; }
+        public Matrix Invoke(Matrix matrix, int? value)
         {
-            public string @Operator { get; set; }
-            private Delegate @Delegate { get; set; }
-            public object Invoke(params object[] args)
-            {
-                return Delegate.DynamicInvoke(args);
-            }
-
-            public static TransformFunction Increase = new TransformFunction
-            {
-                Operator = "I",
-                Delegate = FuncUtilities.Increase,
-            };
-            public static TransformFunction Decrease = new TransformFunction
-            {
-                Operator = "D",
-                Delegate = FuncUtilities.Decrease,
-            };
-            public static TransformFunction Transpose = new TransformFunction
-            {
-                Operator = "T",
-                Delegate = FuncUtilities.Transpose,
-            };
+            return Delegate.Invoke(matrix, value);
         }
+
+        public static readonly TransformFunction Increase = new TransformFunction
+        {
+            Operator = "I",
+            Delegate = FuncUtilities.Increase,
+        };
+        public static readonly TransformFunction Decrease = new TransformFunction
+        {
+            Operator = "D",
+            Delegate = FuncUtilities.Decrease,
+        };
+        public static readonly TransformFunction Transpose = new TransformFunction
+        {
+            Operator = "T",
+            Delegate = FuncUtilities.Transpose,
+        };
+        public static readonly TransformFunction Multiply = new TransformFunction
+        {
+            Operator = "M",
+            Delegate = FuncUtilities.Multiply,
+        };
     }
 }
+

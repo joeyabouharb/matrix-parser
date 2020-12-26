@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "ZpJo30giC0E7+Xe9Ljp1egUloIeCBw6iOsVt7GI5c6wQqdlaC6FAMT71grf5TZgUjRm1I2vep9culuitpCbIKA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\joeya\\source\\repos\\ConsoleApp2\\ConsoleApp2.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\joeya\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\joeya\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp2", "ConsoleApp2\ConsoleApp2.csproj", "{65FDB2E3-0EDF-4E6A-888E-63A3B84378DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixTester", "MatrixTester\MatrixTester.csproj", "{84744CD2-C23B-4FFD-B28D-67830D52CF9C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{65FDB2E3-0EDF-4E6A-888E-63A3B84378DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65FDB2E3-0EDF-4E6A-888E-63A3B84378DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65FDB2E3-0EDF-4E6A-888E-63A3B84378DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84744CD2-C23B-4FFD-B28D-67830D52CF9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84744CD2-C23B-4FFD-B28D-67830D52CF9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84744CD2-C23B-4FFD-B28D-67830D52CF9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84744CD2-C23B-4FFD-B28D-67830D52CF9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

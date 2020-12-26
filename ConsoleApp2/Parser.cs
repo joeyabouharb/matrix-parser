@@ -60,14 +60,15 @@ namespace ConsoleApp2
             : null;
         };
         private static Func<string, string> _asStr = (value) => value;
+
         private Delegate Action { get; set; }
 
         public object Invoke (params object[] args)
         {
             return Action.DynamicInvoke(args);
         }
-        public static ParseCaster AsString = new ParseCaster(_asStr);
-        public static ParseCaster AsInt = new ParseCaster(_asInt);
+        public static readonly ParseCaster AsString = new ParseCaster(_asStr);
+        public static readonly ParseCaster AsInt = new ParseCaster(_asInt);
         private ParseCaster(Delegate @delegate)
         {
             Action = @delegate;

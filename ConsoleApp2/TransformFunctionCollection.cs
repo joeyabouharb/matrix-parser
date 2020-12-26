@@ -5,30 +5,27 @@ namespace ConsoleApp2
     using System.Collections.Immutable;
     using System.Linq;
     using System.Reflection;
-
-    partial class Program
+    public class TransformFunctionCollection : TransformFunction
     {
-        public class TransformFunctionCollection : TransformFunction
+        public TransformFunction this[string key]
         {
-            public TransformFunction this[string key]
+            get
             {
-                get
-                {
-                    funcs.TryGetValue(key, out var item);
-                    return item;
-                }
+                funcs.TryGetValue(key, out var item);
+                return item;
             }
-            private static readonly IDictionary<string, TransformFunction> funcs;
-            static TransformFunctionCollection()
+        }
+        private readonly IDictionary<string, TransformFunction> funcs;
+        public TransformFunctionCollection()
+        {
+            var type = typeof(TransformFunction);
+            try
             {
-                var type = typeof(TransformFunction);
-                try
-                {
-                    funcs = type.GetFields(BindingFlags.Public | BindingFlags.Static)
-                        .Select(bla => bla.GetValue(type) as TransformFunction).ToImmutableDictionary(p => p.Operator, p => p);
-                }
-                catch { }
+                funcs = type.GetFields(BindingFlags.Public | BindingFlags.Static)
+                    .Select(bla => bla.GetValue(type) as TransformFunction).ToImmutableDictionary(p => p.Operator, p => p);
             }
+            catch { }
         }
     }
 }
+

@@ -12,14 +12,14 @@ namespace ConsoleApp2
         public object Value { get; private set; }
         public int Position { get; private set; }
         private ParseCaster Converter { get; set; }
-
+        public bool Optional { get; private set; }
         public virtual void TrySetValue(string value, out string error)
         {
             error = string.Empty;
             try
             {
                 Value = Converter?.Invoke(value);
-                if (Value == null)
+                if (Value == null && !Optional)
                     error = $"{Name} has been passed incorrect value";
             }
             catch
@@ -27,66 +27,42 @@ namespace ConsoleApp2
                 error = $"{Name} has been passed incorrect value";
             }
         }
-        public Argument(string name, int position, ParseCaster converter)
+        public Argument(string name, int position, ParseCaster converter, bool optional)
         {
             Name = name;
             Position = position;
             Converter = converter;
-        }
-        public Argument(string name, int position)
-        {
-            Name = name;
-            Position = position;
+            Optional = optional;
         }
     }
-    public sealed class CommandArgumentList : Parser
+    public sealed class ArgumentList : Parser
     {
         public IEnumerable<Argument> Arguments { get => Elements as IEnumerable<Argument>; }
-        public void Add(string name)
+        public bool Add(string name, ParseCaster caster, out string err, int range = 1, bool optional = false)
         {
-            object element;
-            element = new Argument(name, Count);
-            Elements.Add(element);
-            Count += 1;
-        }
-        public bool Add(string name, ParseCaster caster, int range = 0)
-        {
-            object element;
-            if (range > 0)
-                foreach (var _ in Enumerable.Range(0, range - Count))
-                {
-                    element = new Argument(name + _, Count, caster);
-                    Elements.Add(element);
-                    Count += 1;
-                }
-            else
+            Argument element;
+            err = string.Empty;
+            if (Count > _argsList.Length)
             {
-                element = new Argument(name, Count, caster);
+                err = $"Not enough positional arguments supplied: missing {name} at position {Count}";
+                return false;
+            }
+            foreach (var index in Enumerable.Range(0, range))
+            {
+                var subVal = index == 0 ? string.Empty : index.ToString();
+                element = new Argument(name + subVal, Count, caster, optional);
+                element.TrySetValue(_argsList[Count], out err);
                 Elements.Add(element);
+                if (!string.IsNullOrEmpty(err))
+                    return false;
                 Count += 1;
             }
             return true;
         }
-
-        public void TryParse(string[] args, out string error)
+        public ArgumentList(string[] args)
         {
-            error = string.Empty;
-            if (args.Length < Count)
-            {
-                error = $"Missing Arguments";
-                return;
-            }
-            if (args.Length > Count)
-            {
-                error = "To Many Arguments";
-                return;
-            }
-            foreach (Argument argument in this)
-            {
-                argument.TrySetValue(args[argument.Position], out error);
-                if (!string.IsNullOrEmpty(error))
-                    return;
-            }
+            _argsList = args;
         }
+        private readonly string[] _argsList;
     }
 }

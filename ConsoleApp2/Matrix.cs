@@ -14,10 +14,9 @@ namespace ConsoleApp2
     using System.Linq;
     using System.Security.Cryptography.X509Certificates;
 
-    partial class Program
-    {
         public class Matrix
         {
+            private TransformFunctionCollection _transformCollection => new TransformFunctionCollection();
             public IEnumerable<IEnumerable<int?>> Vectors { get; private set; }
             public int RowCount { get; private set; }
             public int ColCount { get; private set; }
@@ -28,13 +27,15 @@ namespace ConsoleApp2
                 RowCount = rowCount;
                 ColCount = colCount;
             }
-            public static Matrix TryCreate(int row, int column, IEnumerable<Argument> arguments, out string err)
+            public Matrix (List<List<int?>> vectors)
+            {
+                Vectors = vectors;
+                RowCount = vectors.Count;
+                ColCount = vectors.FirstOrDefault()?.Count ?? 0;
+            }
+            public static Matrix TryCreate(int row, int column, int?[] data, out string err)
             {
                 err = string.Empty;
-                var data = arguments
-                    .Where((arg) => arg.Name.Contains("Data", StringComparison.InvariantCultureIgnoreCase))
-                    .Select(arg => arg.Value as int?)
-                    .ToArray<int?>();
                 int len = row * column;
                 if (data.Any((v) => v == null) || (data.Length != len))
                 {
@@ -46,18 +47,15 @@ namespace ConsoleApp2
 
                 return new Matrix(results, row, column);
             }
-            public Matrix TryTransform(string @operator, out string err)
+            public Matrix TryTransform(string @operator, int? value, out string err)
             {
                 err = string.Empty;
-                var dict = new TransformFunctionCollection();
-
-                var result = dict[@operator]?.Invoke(this) as Matrix;
+                var result = _transformCollection[@operator]?.Invoke(this, value);
                 if (result == null)
                 {
                     err = "Invalid operator supplied";
                 }
                 return result;
             }
-        }
     }
 }
